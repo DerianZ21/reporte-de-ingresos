@@ -5,9 +5,18 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #eeedfd;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.no-zoom {
+  transform: scale(1); /* Asegura que el zoom sea 100% */
+  transform-origin: 0 0; /* Asegura que el origen del zoom esté en la esquina superior izquierda */
+  width: 100%;
+  height: auto;
+  overflow: hidden;
 }
