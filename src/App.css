@@ -42,7 +42,7 @@ header {
   text-align: center;
   margin: 5px;
   font-size: 25px;
-  color: #3675c7;
+  color: #eb472a;
   font-weight: bolder;
 }
 
@@ -108,6 +108,11 @@ main .columna p {
   flex-direction: row;
 }
 
+.formulario, .usuario{
+  max-width: 80em;
+}
+
+
 .imagenes {
   display: flex;
   flex-direction: column;
@@ -129,10 +134,10 @@ main .columna p {
 
 .containerImagenes {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 15px;
   margin: 30px;
-  margin-top: 0;
+  margin-top: 10px;
 }
 
 .containerImagenes img {
@@ -141,6 +146,12 @@ main .columna p {
   object-fit: cover;
   border-radius: 5px;
   cursor: pointer;
+  margin: auto;
+  transition: all 0.3s ease;
+}
+
+.containerImagenes img:hover {
+  scale: 1.02;
 }
 
 #descargarPDF button {
@@ -165,6 +176,7 @@ footer {
   background-color: #ffffff;
   box-shadow: 0px -5px 5px 0px #00000015;
 }
+
 
 @media(max-width: 850px) {
 

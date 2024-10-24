@@ -1,10 +1,21 @@
 const baseUrl = process.env.REACT_APP_PINLET_SERVER_URL;
 const apiKey = process.env.REACT_APP_PINLET_API_KEY;
 
-let data = null;
+let dataMarcacion = null;
+let dataLugar = null;
 
 export const obtenerDatos = async (endpoint, payload) => {
-    if(!data){
+    let data = "";
+
+    // Verificar si ya existen datos en caché
+    if (endpoint === "getMarcacion_residenteLugar") {
+        data = dataMarcacion;
+    } else if (endpoint === "getLugar") {
+        data = dataLugar;
+    }
+
+    // Si no hay datos en caché, realizar la solicitud a la API
+    if (!data) {
         try {
             const response = await fetch(`${baseUrl}/${endpoint}`, {
                 method: 'POST',
@@ -14,32 +25,28 @@ export const obtenerDatos = async (endpoint, payload) => {
                 },
                 body: JSON.stringify(payload)
             });
-    
+
             if (!response.ok) {
-                throw new Error("Error al hacer la solicitud")
-            };
-            const data = await response.json();
-            return data
-        }
-        catch (error) {
+                throw new Error("Error al hacer la solicitud");
+            }
+
+            // Obtener la respuesta y guardarla en la variable correspondiente
+            data = await response.json();
+
+            // Actualizar la caché según el endpoint
+            if (endpoint === "getMarcacion_residenteLugar") {
+                dataMarcacion = data;
+            } else if (endpoint === "getLugar") {
+                dataLugar = data;
+            }
+
+            return data;
+        } catch (error) {
             console.error("Error al obtener los datos", error);
-            throw error
+            throw error;
         }
-    }else{
+    } else {
+        // Si ya hay datos en caché, devolverlos
         return data;
     }
-    
-}
-
-//metodos getter y setter para para los datos de consulta
-export const getData = () =>{
-    return data;
-}
-
-export const setData = (newData) =>{
-    data = newData;
-}
-
-export const clearData = () => {
-    data = null;
-}
+};

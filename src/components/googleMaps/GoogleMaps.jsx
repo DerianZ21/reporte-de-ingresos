@@ -2,16 +2,32 @@ import React, { useEffect, useRef } from "react";
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const mapId = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID;
 
-const GoogleMapComponent = () => {
+const GoogleMapComponent = ({ latitud, longitud }) => {
 
     const mapRef = useRef(null);
 
     useEffect(() => {
 
+        const isValidCoordinate = (lat, lng) => {
+            return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+        };
+
+
+
+
         const loadMap = () => {
+
+            if (!isValidCoordinate(latitud, longitud)) {
+                console.error("Coordenadas inválidas: Latitud o Longitud fuera de rango o no numéricas.");
+                return ;
+            }
+
+            const latNumeric = parseFloat(latitud);
+            const lngNumeric = parseFloat(longitud);
             const google = window.google;
             const map = new google.maps.Map(mapRef.current, {
-                center: { lat: -2.054408, lng: -79.880856 }, // Ubicación inicial (céntrala según tus necesidades)
+
+                center: { lat: latNumeric, lng: lngNumeric }, // Ubicación inicial (céntrala según tus necesidades)
                 zoom: 15, // Nivel de zoom
                 mapId: mapId,
                 streetViewControl: false, // Desactiva el muñequito amarillo de Street View
@@ -43,7 +59,7 @@ const GoogleMapComponent = () => {
             // Limpiar el callback del mapa cuando el componente se desmonte
             window.initMap = undefined;
         };
-    }, [apiKey]);
+    }, [latitud, longitud, apiKey]);
 
     return (
         <div style={{ justifyItems: "center" }}>

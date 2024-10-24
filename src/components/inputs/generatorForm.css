@@ -1,0 +1,80 @@
+.containerInputs {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+/*estilos de componentes de ingreso generales */
+.formulario .input {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.formulario .input label {
+    display: inline-block !important;
+    transform: translate(10px, 10px);
+    background-color: #ffffff;
+    padding: 0 8px;
+    font-size: 14px;
+}
+
+.formulario .input input,
+.formulario .input a,
+.formulario .input .cbContainer{
+    width: 90%;
+    padding: 12px;
+    border: solid 2px #B7B7B7;
+    border-radius: 5px;
+    font-size: 17px;
+    background-color: #Ffffff;
+}
+
+.formulario .input .cbContainer{
+    display: flex;
+    flex-direction: row;
+}
+
+.formulario .input .cbContainer .cbElement{
+    padding: 0px;
+    width: 30%;
+}
+
+.formulario .input a{
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    padding: 0 12px;
+    align-items: center;
+    text-decoration: none;
+}
+
+.formulario .input a hr{
+    height: 24px;
+    margin: 8px 0;
+    opacity: 0.7;
+}
+
+.formulario .input a img{
+    margin: 0 !important;
+}
+
+.formulario .input a p{
+    margin: 0;
+    display: inline-block;
+    width: 100%;
+    color: #000000;
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    overflow: hidden; /* Oculta el texto que sobrepase el tamaño del contenedor */
+    text-overflow: ellipsis;
+}
+
+.form-component {
+    align-items: center;
+}

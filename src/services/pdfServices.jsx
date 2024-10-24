@@ -15,8 +15,7 @@ export const downloadPDF = () => {
 
     input.classList.add("pdf-capture-mode");
     document.body.classList.add("no-zoom");
-    const scale = 1 / window.devicePixelRatio;
-    
+
     button.style.display = 'none';
     const originalMapContent = mapContainer.innerHTML;
 
@@ -25,7 +24,7 @@ export const downloadPDF = () => {
     const zoom = 15;
 
     const staticMapUrl = getStaticMapUrl(lat, lng, zoom, apiKey, 500, containerMapHeight);
-   
+
 
     const img = new Image();
     img.src = staticMapUrl;
@@ -76,7 +75,7 @@ export const downloadPDF = () => {
 
 const getStaticMapUrl = (lat, lng, zoom, apiKey, containerMapWidth, containerMapHeight) => {
     return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=${containerMapWidth}x${containerMapHeight}&markers=color:red%7C${lat},${lng}&key=${apiKey}`;
-    
+
 };
 
 

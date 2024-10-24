@@ -5,42 +5,60 @@ import scanIcon from "./assets/ubicacion.svg";
 import rutasIcon from "./assets/rutas.svg";
 import ciIcon from "./assets/identidad.svg";
 import logoPinlet from "./assets/logo-pinlet.png";
-import GoogleMapComponent from "./components/googleMaps";
-import { obtenerDatos, getData, setData } from "./services/dataServices";
-import { ImageModal } from "./components/imageModal";
+import GoogleMapComponent from "./components/googleMaps/GoogleMaps.jsx";
+import { obtenerDatos } from "./services/dataServices";
+import { ImageModal } from "./components/imageModal/ImageModal.jsx";
+import Form from "./components/inputs/GeneratorForm.jsx";
+import imgLgarProvisional from "./assets/lugar.svg";
 
 function App() {
-  const [data, setDataState] = useState(null);
-  const [loading, setLoading] = useState([true]);
+  const [dataMarcacion, setDataMarcacion] = useState(null);
+  const [dataLugar, setDataLugar] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
-  let tipoMarcacion = "checkIn";
+  const [parametros, setParametros] = useState("");
+  const [parametrosArray, setParametrosArray] = useState([]);
+
+  let tipoMarcacion = "";
   let iconTipo = "";
 
-  const iconLugar = "/Lugar/143-iKoCt.webp"; //imagen de prueba de lugar
+  const getParams = () => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id"); // extrae el parámetro "id"
+    const type = params.get("type"); // extrae el parámetro "typ"
+    return { id, type }; // devuelve un objeto con ambos parámetros
+  };
 
-  if (tipoMarcacion === "scan") {
+  const { id, type } = getParams();
+
+  if (type === "A") {
     iconTipo = scanIcon;
-  } else if (tipoMarcacion === "checkIn") {
+    tipoMarcacion = "Check In"
+  } else if (type === "H") {
+    tipoMarcacion = "Scan"
     iconTipo = ciIcon;
   } else {
     iconTipo = rutasIcon;
+    tipoMarcacion = "Rutas"
   }
 
+  //consulta a /getMarcacion_residenteLugar
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log(id);
+        console.log(type);
         const payload = {
-          id_marcacion_residente: "256",
-          tipo: "H",
+          id_marcacion_residente: id,
+          tipo: type,
         };
-        const result = await obtenerDatos(
+        const resultMarcacion = await obtenerDatos(
           "getMarcacion_residenteLugar",
           payload
         );
-        setDataState(result);
-        setData(result);
+        setDataMarcacion(resultMarcacion);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -51,17 +69,47 @@ function App() {
     fetchData();
   }, []);
 
+  // consulta a getLugar
   useEffect(() => {
-    const datosGlobales = getData(); // Obtener los datos de la variable global
-    if (datosGlobales) {
-      setDataState(datosGlobales); // Actualizar el estado si ya existen datos globales
+    const fetchData = async () => {
+      if (dataMarcacion && dataMarcacion.id_lugar) {
+        try {
+          const payload = {
+            id_lugar: dataMarcacion?.id_lugar,
+          };
+          const resultLugar = await obtenerDatos("getLugar", payload);
+          setDataLugar(resultLugar);
+        } catch (e) {
+          setError(e.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [dataMarcacion]);
+
+  useEffect(() => {
+    if (dataMarcacion?.parametros) {
+      setParametros(dataMarcacion.parametros);
     }
-  }, []);
+  }, [dataMarcacion]);
+
+  useEffect(() => {
+    if (parametros) {
+      try {
+        setParametrosArray(JSON.parse(parametros));
+      } catch (error) {
+        console.error("Error al parsear JSON de parámetros", error);
+      }
+    }
+  }, [parametros]);
 
   if (loading) return <p>Cargando datos...</p>;
   if (error) return <p>Error al cargar los datos...</p>;
 
-  const imagenes = data?.imagenes || [];
+  const imagenes = dataMarcacion?.imagenes || [];
 
   const openModal = (imgSrc) => {
     setCurrentImage(imgSrc);
@@ -77,15 +125,26 @@ function App() {
       <header>
         <div className="containerHeader">
           <div className="imgIcon lugar">
-            <img id="iconLugar" src={iconLugar} alt="Lugar"></img>
+            {dataLugar?.imagen ? (
+              <img
+                id="iconLugar"
+                src={`/Lugar/${dataLugar.imagen}`}
+                alt="Lugar"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = imgLgarProvisional;
+                }}
+              />
+            ) : (
+              <img src={imgLgarProvisional} alt="Lugar"></img> // O puedes mostrar una imagen por defecto aquí
+            )}
           </div>
           <div className="titulo">
             <h2>Reporte</h2>
             <h1>Ingreso de usuario</h1>
-            <hr></hr>
             <div className="tipo">
               <img src={iconTipo} alt="icono de scan}" />
-              <h1>Scan</h1>
+              <h1>{tipoMarcacion}</h1>
             </div>
           </div>
           <div className="imgIcon branding">
@@ -100,58 +159,76 @@ function App() {
               <h2 className="subtitulo">Usuario</h2>
               <div className="columna">
                 <p>Nombres:</p>
-                <p>{data?.nombres_residente}</p>
+                <p>{dataMarcacion?.nombres_residente}</p>
               </div>
               <div className="columna">
                 <p>Apellidos:</p>
-                <p>{data?.apellidos_residente}</p>
+                <p>{dataMarcacion?.apellidos_residente}</p>
               </div>
               <div className="columna">
                 <p>Cédula:</p>
-                <p>{data?.cedula_residente}</p>
+                <p>{dataMarcacion?.cedula_residente}</p>
               </div>
               <div className="columna">
                 <p>Celular:</p>
-                <p>{data?.celular_residente}</p>
+                <p>{dataMarcacion?.celular_residente}</p>
               </div>
               <div className="columna">
                 <p>Correo:</p>
-                <p>{data?.correo_residente}</p>
-              </div>
-              <div className="columna">
-                <p>Primario:</p>
-                <p>{data?.primario_residente}</p>
-              </div>
-              <div className="columna">
-                <p>Secundario:</p>
-                <p>{data?.secundario_residente}</p>
+                <p>{dataMarcacion?.correo_residente}</p>
               </div>
             </div>
-            <div className="data fija">
-              <h2 className="subtitulo">Información</h2>
+          </div>
+
+          <div className="group">
+            <div className="data lugar">
+              <h2 className="subtitulo">Lugar</h2>
               <div className="columna">
-                <p>Fecha creación:</p>
-                <p>{data.fecha_creacion}</p>
+                <p>Nombre: </p>
+                <p>{dataLugar?.nombre}</p>
+              </div>
+              <div className="columna">
+                <p>Pais: </p>
+                <p>{dataLugar?.pais}</p>
+              </div>
+              <div className="columna">
+                <p>Ciudad: </p>
+                <p>{dataLugar?.ciudad}</p>
               </div>
               <div className="columna">
                 <p>Tipo:</p>
-                <p>{data?.fecha_creacion}</p>
+                <p>{dataLugar?.tipo}</p>
+              </div>
+            </div>
+            <div className="data detalle">
+              <h2 className="subtitulo">Detalles</h2>
+              <div className="columna">
+                <p>Fecha de marcación:</p>
+                <p>{dataMarcacion.fecha_creacion}</p>
               </div>
               <div className="columna">
-                <p>Lugar:</p>
-                <p>{data?.fecha_creacion}</p>
+                <p>Tipo:</p>
+                <p>{dataMarcacion?.tipo}</p>
               </div>
               <div className="columna">
                 <p>Descripción:</p>
-                <p>{data?.descripcion}</p>
+                <p>{dataMarcacion?.descripcion}</p>
               </div>
               <div className="columna">
-                <p>Clasificación:</p>
-                <p>{data?.calificacion}</p>
+                <p>Calificación:</p>
+                <p>{dataMarcacion?.calificacion}</p>
               </div>
               <div className="columna">
                 <p>Distancia:</p>
-                <p>{data?.distancia}</p>
+                <p>{dataMarcacion?.distancia}</p>
+              </div>
+              <div className="columna">
+                <p>{`${dataLugar?.primario}:`}</p>
+                <p>{dataMarcacion?.primario_residente}</p>
+              </div>
+              <div className="columna">
+                <p>{`${dataLugar?.secundario}:`}</p>
+                <p>{dataMarcacion?.secundario_residente}</p>
               </div>
             </div>
           </div>
@@ -161,27 +238,46 @@ function App() {
               <h2 className="subtitulo">Ubicación</h2>
               <div className="columna">
                 <p>Dirección:</p>
-                <p>{data?.direccion}</p>
+                <p>{dataMarcacion?.direccion}</p>
               </div>
               <div className="columna">
-                <p>Latitud::</p>
-                <p>{data?.latitud}</p>
+                <p>Latitud:</p>
+                <p>{dataMarcacion?.latitud}</p>
               </div>
               <div className="columna">
                 <p>Longitud:</p>
-                <p>{data?.longitud}</p>
+                <p>{dataMarcacion?.longitud}</p>
               </div>
             </div>
             <div className="data ubicaion">
-              <GoogleMapComponent />
+              <GoogleMapComponent
+                latitud={dataMarcacion?.latitud}
+                longitud={dataMarcacion?.longitud}
+              />
             </div>
           </div>
+          <div className="group">
+            <div className="data formulario">
+              <h2 className="subtitulo">formulario de marcación</h2>
+              <Form parametros={parametrosArray} />
+            </div>
+          </div>
+
           <div className="imagenes">
             <h2>Imagenes</h2>
             <div className="containerImagenes">
-              {imagenes.map((url, index) => (
-                <img key={index} src={url} alt={`Imagen ${index + 1}`}  onClick={() => openModal(url)} />
-              ))}
+              {!imagenes || imagenes.length === 0 ? (
+                <p>No hay imágenes disponibles...</p>
+              ) : (
+                imagenes.map((url, index) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt={`Imagen ${index + 1}`}
+                    onClick={() => openModal(url)}
+                  />
+                ))
+              )}
             </div>
           </div>
           <div id="descargarPDF">
@@ -191,7 +287,11 @@ function App() {
           </div>
         </div>
       </main>
-      <ImageModal active={modalOpen} onClose={closeModal} imgSrc={currentImage} />
+      <ImageModal
+        active={modalOpen}
+        onClose={closeModal}
+        imgSrc={currentImage}
+      />
       <footer>© Pinlet. 2024</footer>
     </div>
   );
