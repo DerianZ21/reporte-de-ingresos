@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/report/static/css/main.311abea1.css",
+    "main.js": "/report/static/js/main.892eb7e7.js",
+    "static/js/213.931f131b.chunk.js": "/report/static/js/213.931f131b.chunk.js",
+    "static/js/732.92dad29e.chunk.js": "/report/static/js/732.92dad29e.chunk.js",
+    "static/js/453.85311617.chunk.js": "/report/static/js/453.85311617.chunk.js",
+    "static/media/logo-pinlet.png": "/report/static/media/logo-pinlet.6e91c7c5b5689f2f2f4b.png",
+    "static/media/fileIcon.svg": "/report/static/media/fileIcon.338b94e3b6fad8e3bae54a9cc4e4b38a.svg",
+    "static/media/ubicacion.svg": "/report/static/media/ubicacion.ad497c192284110017b8939f89d17f11.svg",
+    "static/media/rutas.svg": "/report/static/media/rutas.06c8fbc29a30426ba342d1f3046cfc6e.svg",
+    "index.html": "/report/index.html",
+    "static/media/linkIcon.svg": "/report/static/media/linkIcon.edbed9c705ce8616c60752a7a3a2f845.svg",
+    "static/media/identidad.svg": "/report/static/media/identidad.725ab7959443eb02768fe26f4198cdf5.svg",
+    "static/media/lugar.svg": "/report/static/media/lugar.3e82ff1827c88659c5e2067dbc0a1dfa.svg",
+    "main.311abea1.css.map": "/report/static/css/main.311abea1.css.map",
+    "main.892eb7e7.js.map": "/report/static/js/main.892eb7e7.js.map",
+    "213.931f131b.chunk.js.map": "/report/static/js/213.931f131b.chunk.js.map",
+    "732.92dad29e.chunk.js.map": "/report/static/js/732.92dad29e.chunk.js.map",
+    "453.85311617.chunk.js.map": "/report/static/js/453.85311617.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.311abea1.css",
+    "static/js/main.892eb7e7.js"
+  ]
+}
